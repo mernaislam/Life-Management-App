@@ -1,25 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:life_management/screens/home_screen.dart';
 
-class SignUpForm extends StatefulWidget {
-  const SignUpForm({super.key});
+class SignInForm extends StatefulWidget {
+  const SignInForm({super.key});
   @override
-  State<SignUpForm> createState() {
-    return _SignUpFormState();
+  State<SignInForm> createState() {
+    return _SignInFormState();
   }
 }
 
-class _SignUpFormState extends State<SignUpForm> {
-  FocusNode myNameFocusNode = FocusNode();
+class _SignInFormState extends State<SignInForm> {
   FocusNode myEmailFocusNode = FocusNode();
   FocusNode myPasswordFocusNode = FocusNode();
 
   @override
   void initState() {
     super.initState();
-    myNameFocusNode.addListener(() {
-      setState(() {});
-    });
     myEmailFocusNode.addListener(() {
       setState(() {});
     });
@@ -30,7 +26,6 @@ class _SignUpFormState extends State<SignUpForm> {
 
   @override
   void dispose() {
-    myNameFocusNode.dispose();
     myEmailFocusNode.dispose();
     myPasswordFocusNode.dispose();
     super.dispose();
@@ -46,31 +41,21 @@ class _SignUpFormState extends State<SignUpForm> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Sign up',
+              'Welcome Back',
               style: TextStyle(
                 color: Theme.of(context).colorScheme.primary,
-                fontSize: 50,
+                fontSize: 40,
+              ),
+            ),
+            Text(
+              ' we\'re glad you\'re here',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onPrimary,
+                fontSize: 23,
               ),
             ),
             const SizedBox(
               height: 30,
-            ),
-            TextFormField(
-              focusNode: myNameFocusNode,
-              decoration: InputDecoration(
-                labelText: 'name:',
-                labelStyle: TextStyle(
-                  fontSize: 20,
-                  color: myNameFocusNode.hasFocus
-                      ? Theme.of(context).colorScheme.primary
-                      : Theme.of(context).colorScheme.onPrimary,
-                ),
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Theme.of(context).colorScheme.onPrimary,
-                  ),
-                ),
-              ),
             ),
             TextFormField(
               style: TextStyle(
@@ -120,7 +105,7 @@ class _SignUpFormState extends State<SignUpForm> {
                     );
                   },
                   child: Text(
-                    'Sign up',
+                    'Sign In',
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.onPrimary,
                       fontSize: 35,

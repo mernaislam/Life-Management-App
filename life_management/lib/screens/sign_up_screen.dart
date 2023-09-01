@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:life_management/screens/sign_in_screen.dart';
-import 'package:life_management/widgets/bottom_wave_clipper.dart';
 import 'package:life_management/widgets/sign_up_form.dart';
 import 'package:life_management/widgets/wave_clipper.dart';
 
@@ -31,7 +30,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         builder: (ctx) => const SignInScreen()));
                   },
                   child: Text(
-                    'sign in',
+                    'Sign in',
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.onPrimary,
                       fontSize: 20,
@@ -53,7 +52,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 RotatedBox(
                   quarterTurns: -2,
                   child: ClipPath(
-                    clipper: BottomWaveClipper(),
+                    clipper: WaveClipper(),
                     child: Container(
                       height: 150,
                       alignment: Alignment.center,
@@ -79,7 +78,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             width: 16,
                           ),
                           Text(
-                            'sign up with facebook',
+                            'Sign up with Facebook',
                             style: TextStyle(
                               color: Theme.of(context).colorScheme.onPrimary,
                               fontSize: 20,
