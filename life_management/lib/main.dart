@@ -21,6 +21,7 @@ class MyApp extends StatelessWidget {
           secondary: const Color.fromARGB(255, 245, 131, 31),
           tertiary: const Color.fromARGB(255, 31, 159, 188),
           background: const Color.fromARGB(255, 1, 54, 70),
+          shadow: const Color.fromARGB(149, 46, 95, 110),
         ),
         useMaterial3: true,
       ),
