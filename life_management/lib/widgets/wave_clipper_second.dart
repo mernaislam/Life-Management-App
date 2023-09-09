@@ -6,9 +6,9 @@ class WaveClipperSecond extends CustomClipper<Path>{
     var path = Path();
     path.lineTo(0, size.height);
     var firstStart = Offset(size.width / 6, size.height*0.5);
-    var firstEnd = Offset(size.width / 2.25, size.height*0.4);
+    var firstEnd = Offset(size.width / 2.25, size.height*0.45);
     path.quadraticBezierTo(firstStart.dx, firstStart.dy, firstEnd.dx, firstEnd.dy);
-    var secondStart = Offset(size.width - size.width / 3.25, size.height - 100.0);
+    var secondStart = Offset(size.width - size.width / 3.25, size.height - 100);
     var secondEnd = Offset(size.width, size.height - 10);
     path.quadraticBezierTo(secondStart.dx, secondStart.dy, secondEnd.dx, secondEnd.dy);
     

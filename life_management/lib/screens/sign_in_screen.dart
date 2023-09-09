@@ -8,31 +8,31 @@ class SignInScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
+      appBar: AppBar(
+        bottom: const PreferredSize(
+          preferredSize: Size.fromHeight(20),
+          child: SizedBox(),
+        ),
+        scrolledUnderElevation: 0.0,
+        toolbarHeight: 80,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+        iconTheme: IconThemeData(
+          size: 28,
+          color: Theme.of(context).colorScheme.onPrimary,
+        ),
+        backgroundColor: Colors.transparent,
+        flexibleSpace: ClipPath(
+          clipper: WaveClipperSecond(),
+          child: Container(
+            color: Theme.of(context).colorScheme.primary,
+            height: 200,
+          ),
+        ),
+      ),
+      body: const SingleChildScrollView(
         child: Column(
           children: [
-            ClipPath(
-              clipper: WaveClipperSecond(),
-              child: Container(
-                alignment: Alignment.centerLeft,
-                color: Theme.of(context).colorScheme.primary,
-                height: 150,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 16),
-                  child: IconButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    icon: Icon(
-                      Icons.undo_sharp,
-                      size: 32,
-                      color: Theme.of(context).colorScheme.onPrimary,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            const Padding(
+            Padding(
               padding: EdgeInsets.only(top: 70),
               child: SignInForm(),
             ),
