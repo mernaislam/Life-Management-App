@@ -6,4 +6,5 @@ class TaskModel {
   final DateTime date;
   final TimeOfDay time;
   String? tag;
+  bool completed = false;
 }

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
 class TagsDropdownMenu extends StatefulWidget {
-  const TagsDropdownMenu({super.key, required this.dropDownValue});
+  const TagsDropdownMenu({super.key, required this.dropDownValue, required this.onChanged});
   final String dropDownValue;
+  final void Function(String) onChanged;
   @override
   State<TagsDropdownMenu> createState() => _CustomDropdownMenuState();
 }
@@ -14,6 +15,11 @@ class _CustomDropdownMenuState extends State<TagsDropdownMenu> {
     dropDownVal = widget.dropDownValue;
     super.initState();
   }
+
+  // String onChangedFun(String value){
+
+  //   return value;
+  // }
   @override
   Widget build(BuildContext context) {
     return DropdownButtonHideUnderline(
@@ -44,6 +50,7 @@ class _CustomDropdownMenuState extends State<TagsDropdownMenu> {
             setState(() {
               dropDownVal = value!;
             });
+            widget.onChanged(value!);
           },
         ),
       ),

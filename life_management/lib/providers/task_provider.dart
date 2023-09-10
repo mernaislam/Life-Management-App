@@ -2,7 +2,7 @@ import 'package:life_management/models/task.dart';
 import 'package:riverpod/riverpod.dart';
 
 
-class TaskNotifier extends StateNotifier{
+class TaskNotifier extends StateNotifier<List<TaskModel>>{
   TaskNotifier() : super([]);
 
   void addTask(TaskModel task){
@@ -11,4 +11,4 @@ class TaskNotifier extends StateNotifier{
 }
 
 
-final taskList = StateNotifierProvider((ref) => TaskNotifier());
+final taskList = StateNotifierProvider<TaskNotifier,List<TaskModel>>((ref) => TaskNotifier());

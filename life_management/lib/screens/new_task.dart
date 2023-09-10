@@ -1,28 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:life_management/models/task.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:life_management/providers/task_provider.dart';
 import 'package:life_management/widgets/tags_drop_down_menu.dart';
 
-class NewTaskScreen extends StatefulWidget {
+class NewTaskScreen extends ConsumerStatefulWidget {
   const NewTaskScreen({super.key});
 
   @override
-  State<NewTaskScreen> createState() => _NewTaskScreenState();
+  ConsumerState<NewTaskScreen> createState() => _NewTaskScreenState();
 }
 
-class _NewTaskScreenState extends State<NewTaskScreen> {
-  final _dropDownValue = 'Tags';
+class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
+  var _dropDownValue = 'Tags';
   var _currentDate = DateTime.now();
   TimeOfDay _timeOfDay = TimeOfDay.now();
   final _enteredText = TextEditingController();
   final formKey = GlobalKey<FormState>();
 
-  void _saveTask(){
-    bool valid =formKey.currentState!.validate();
-    if(!valid) return;
+  void _saveTask() {
+    bool valid = formKey.currentState!.validate();
+    if (!valid) return;
     formKey.currentState!.save();
-    print(_dropDownValue);
-    // if(_dropDownValue )
-    TaskModel(name: _enteredText.text, date: _currentDate, time: _timeOfDay);
+    if (_dropDownValue == 'Tags') {
+      ref.read(taskList.notifier).addTask(
+            TaskModel(
+              name: _enteredText.text,
+              date: _currentDate,
+              time: _timeOfDay,
+            ),
+          );
+    } else {
+      ref.read(taskList.notifier).addTask(
+            TaskModel(
+              name: _enteredText.text,
+              date: _currentDate,
+              time: _timeOfDay,
+              tag: _dropDownValue
+            ),
+          );
+    }
+    print('ayhaga');
+    Navigator.of(context).pop();
   }
 
   void _datePicker() async {
@@ -314,7 +333,12 @@ class _NewTaskScreenState extends State<NewTaskScreen> {
                         ),
                         SizedBox(
                           width: 280,
-                          child: TagsDropdownMenu(dropDownValue: _dropDownValue),
+                          child: TagsDropdownMenu(
+                            dropDownValue: _dropDownValue,
+                            onChanged: (value) {
+                              _dropDownValue = value;
+                            },
+                          ),
                         ),
                       ],
                     ),

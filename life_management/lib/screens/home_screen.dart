@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:life_management/screens/all_tasks.dart';
 import 'package:life_management/screens/new_task.dart';
 import 'package:life_management/widgets/drawer_content.dart';
 
@@ -227,7 +228,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           horizontal: 9,
                         ),
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (ctx) => const AllTasksScreen(),
+                          ),
+                        );
+                      },
                       icon: const Icon(
                         Icons.arrow_downward_outlined,
                         size: 15,
