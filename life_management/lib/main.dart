@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
           background: const Color.fromARGB(255, 1, 54, 70),
           shadow: const Color.fromARGB(149, 46, 95, 110),
         ),
-        unselectedWidgetColor: Color.fromARGB(255, 255, 96, 128), // <-- your color
+        unselectedWidgetColor: const Color.fromARGB(255, 255, 96, 128), // <-- your color
 
         useMaterial3: true,
       ),

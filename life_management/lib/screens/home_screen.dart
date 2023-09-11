@@ -1,21 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:life_management/models/task.dart';
+import 'package:life_management/providers/task_provider.dart';
 import 'package:life_management/screens/all_tasks.dart';
 import 'package:life_management/screens/new_task.dart';
 import 'package:life_management/widgets/drawer_content.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() {
+  ConsumerState<HomeScreen> createState() {
     return _HomeScreenState();
   }
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
+    final allTasks = ref.watch(taskList);
+    List<TaskModel> renderedTasks = allTasks;
+    if (allTasks.length > 4) {
+      renderedTasks = allTasks.sublist(0, 4);
+    }
     return Scaffold(
       drawer: Drawer(
         backgroundColor: Theme.of(context).colorScheme.background,
@@ -120,51 +128,122 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 15),
+                      child: Column(
+                        children: [
+                          Text(
+                            'Today',
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.onPrimary,
+                              fontSize: 35,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 9,
+                          ),
+                          Text(
+                            DateFormat('EEEE')
+                                .format(DateTime.now())
+                                .toString()
+                                .toUpperCase(),
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.onPrimary,
+                                fontSize: 17,
+                                letterSpacing: 1),
+                          ),
+                          Text(
+                            DateFormat('d').format(DateTime.now()).toString(),
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.onPrimary,
+                              fontSize: 50,
+                            ),
+                          ),
+                          Text(
+                            DateFormat('MMMM')
+                                .format(DateTime.now())
+                                .toString(),
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.onPrimary,
+                              fontSize: 20,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Spacer(),
                     Column(
                       children: [
-                        Text(
-                          'Today',
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.onPrimary,
-                            fontSize: 35,
-                            fontWeight: FontWeight.bold,
+                        if (allTasks.isEmpty)
+                          Text(
+                            'You have no tasks\nTry adding new ones',
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
                           ),
-                        ),
-                        const SizedBox(
-                          height: 9,
-                        ),
-                        Text(
-                          DateFormat('EEEE')
-                              .format(DateTime.now())
-                              .toString()
-                              .toUpperCase(),
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.onPrimary,
-                            fontSize: 17,
-                          ),
-                        ),
-                        Text(
-                          DateFormat('d').format(DateTime.now()).toString(),
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.onPrimary,
-                            fontSize: 50,
-                          ),
-                        ),
-                        Text(
-                          DateFormat('MMMM').format(DateTime.now()).toString(),
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.onPrimary,
-                            fontSize: 20,
-                          ),
-                        ),
+                        if (renderedTasks.isNotEmpty)
+                          ...renderedTasks.map(
+                            (task) {
+                              return SizedBox(
+                                height: 45,
+                                child: Card(
+                                  color: task.completed
+                                      ? Theme.of(context).colorScheme.background
+                                      : Theme.of(context).colorScheme.tertiary,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Checkbox(
+                                        side: BorderSide(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onPrimary,
+                                          width: 2,
+                                        ),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                        checkColor: Colors.white,
+                                        activeColor: Theme.of(context)
+                                            .colorScheme
+                                            .background,
+                                        value: task.completed,
+                                        onChanged: (bool? newValue) {
+                                          setState(() {
+                                            task.completed = newValue!;
+                                          });
+                                        },
+                                      ),
+                                      SizedBox(
+                                        width: 150,
+                                        child: Flexible(
+                                          child: Text(
+                                            task.name,
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .onPrimary,
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          )
                       ],
-                    ),
-                    const SizedBox(
-                      width: 30,
-                    ),
-                    const Text('List to be added'),
+                    )
                   ],
                 ),
                 const Spacer(),
@@ -206,6 +285,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (ctx) => const NewTaskScreen(),
+                            maintainState: false,
                           ),
                         );
                       },
@@ -232,6 +312,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (ctx) => const AllTasksScreen(),
+                            maintainState: false,
                           ),
                         );
                       },

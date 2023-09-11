@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:life_management/providers/task_provider.dart';
+import 'package:life_management/screens/new_task.dart';
 
 class AllTasksScreen extends ConsumerStatefulWidget {
   const AllTasksScreen({super.key});
@@ -15,7 +16,7 @@ class _AllTasksScreenState extends ConsumerState<AllTasksScreen> {
   Widget build(BuildContext context) {
     final allTasks = ref.watch(taskList);
     allTasks.sort(
-      (a, b) => b.date.compareTo(a.date),
+      (a, b) => a.date.compareTo(b.date),
     );
 
     return Scaffold(
@@ -52,8 +53,11 @@ class _AllTasksScreenState extends ConsumerState<AllTasksScreen> {
         child: SingleChildScrollView(
           child: Column(
             children: [
+              const SizedBox(
+                height: 20,
+              ),
               Text(
-                'You have ${allTasks.length} task${allTasks.length == 1? '': 's'} :)',
+                'You have ${allTasks.length} task${allTasks.length == 1 ? '' : 's'} : )',
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.onPrimary,
                   fontSize: 20,
@@ -63,15 +67,45 @@ class _AllTasksScreenState extends ConsumerState<AllTasksScreen> {
                 height: 20,
               ),
               Container(
+                margin: const EdgeInsets.all(20),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 2, vertical: 30),
                 decoration: BoxDecoration(
                   borderRadius: const BorderRadius.all(Radius.circular(30)),
                   color: Theme.of(context).colorScheme.shadow,
                 ),
-                width: 390,
-                height: 600,
+                constraints: const BoxConstraints(minHeight: 600, minWidth: 370),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    if (allTasks.isEmpty)
+                      Column(
+                        children: [
+                          Text(
+                            'Start adding new Tasks!',
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.onPrimary,
+                              fontSize: 20,
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 30,
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (ctx) => const NewTaskScreen()));
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  Theme.of(context).colorScheme.secondary,
+                              foregroundColor:
+                                  Theme.of(context).colorScheme.onPrimary,
+                            ),
+                            child: const Text('Add Task'),
+                          )
+                        ],
+                      ),
                     ...allTasks.map(
                       (task) {
                         return Card(
@@ -83,8 +117,12 @@ class _AllTasksScreenState extends ConsumerState<AllTasksScreen> {
                           margin: const EdgeInsets.symmetric(
                               horizontal: 30, vertical: 10),
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 2),
+                            padding: const EdgeInsets.only(
+                              left: 10,
+                              right: 30,
+                              top: 5,
+                              bottom: 5,
+                            ),
                             child: Row(
                               children: [
                                 Checkbox(
@@ -98,7 +136,7 @@ class _AllTasksScreenState extends ConsumerState<AllTasksScreen> {
                                   ),
                                   checkColor: Colors.white,
                                   activeColor:
-                                      Theme.of(context).colorScheme.primary,
+                                      Theme.of(context).colorScheme.background,
                                   value: task.completed,
                                   onChanged: (bool? newValue) {
                                     setState(() {
@@ -106,39 +144,57 @@ class _AllTasksScreenState extends ConsumerState<AllTasksScreen> {
                                     });
                                   },
                                 ),
-                                Text(
-                                  task.name,
-                                  style: TextStyle(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onPrimary),
+                                SizedBox(
+                                  width: 150,
+                                  child: Flexible(
+                                    child: Text(
+                                      task.name,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onPrimary,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                                const SizedBox(
-                                  width: 20,
-                                ),
+                                const Spacer(),
                                 task.tag != null
                                     ? Text(
-                                        task.tag!,
+                                        '#${task.tag!}',
                                         style: TextStyle(
                                           color: Theme.of(context)
                                               .colorScheme
-                                              .onPrimary,
+                                              .primary,
+                                          fontSize: 16,
                                         ),
                                       )
-                                    : Text(
-                                        'no tag',
-                                        style: TextStyle(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .onPrimary,
-                                        ),
-                                      ),
+                                    : const Text(''),
                               ],
                             ),
                           ),
                         );
                       },
-                    )
+                    ),
+                    const SizedBox(
+                      height: 50,
+                    ),
+                    if (allTasks.isNotEmpty)
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (ctx) => const NewTaskScreen()));
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              Theme.of(context).colorScheme.secondary,
+                          foregroundColor:
+                              Theme.of(context).colorScheme.onPrimary,
+                        ),
+                        child: const Text('Add Task'),
+                      )
                   ],
                 ),
               ),
