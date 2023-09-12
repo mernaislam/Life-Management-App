@@ -15,32 +15,24 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
   var _dropDownValue = 'Tags';
   var _currentDate = DateTime.now();
   TimeOfDay _timeOfDay = TimeOfDay.now();
-  final _enteredText = TextEditingController();
+  final _enteredName = TextEditingController();
+  final _enteredNotes = TextEditingController();
   final formKey = GlobalKey<FormState>();
 
   void _saveTask() {
     bool valid = formKey.currentState!.validate();
     if (!valid) return;
     formKey.currentState!.save();
-    if (_dropDownValue == 'Tags') {
-      ref.read(taskList.notifier).addTask(
-            TaskModel(
-              name: _enteredText.text,
-              date: _currentDate,
-              time: _timeOfDay,
-            ),
-          );
-    } else {
-      ref.read(taskList.notifier).addTask(
-            TaskModel(
-              name: _enteredText.text,
-              date: _currentDate,
-              time: _timeOfDay,
-              tag: _dropDownValue
-            ),
-          );
-    }
-    print('ayhaga');
+    _dropDownValue == 'Tags' ? _dropDownValue = '' : null;
+    ref.read(taskList.notifier).addTask(
+          TaskModel(
+            name: _enteredName.text,
+            date: _currentDate,
+            time: _timeOfDay,
+            tag: _dropDownValue,
+            notes: _enteredNotes.text,
+          ),
+        );
     Navigator.of(context).pop();
   }
 
@@ -254,7 +246,7 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
                         ),
                         border: InputBorder.none,
                       ),
-                      controller: _enteredText,
+                      controller: _enteredName,
                       validator: (String? value) {
                         return (value == null || value.trim().isEmpty)
                             ? 'You must provide a task name'
@@ -267,7 +259,7 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
                   height: 20,
                 ),
                 Text(
-                  '\tNotes:',
+                  '\tAdd Notes:',
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.onPrimary,
                     fontSize: 27,
@@ -285,20 +277,22 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
                     child: TextField(
+                      controller: _enteredNotes,
                       autocorrect: false,
                       maxLines: 3,
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.onPrimary),
                       decoration: InputDecoration(
-                          hintText: 'Write task notes here',
-                          fillColor: Colors.amber,
-                          hintStyle: TextStyle(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onPrimary
-                                .withOpacity(0.2),
-                          ),
-                          border: InputBorder.none),
+                        hintText: 'Write task notes here',
+                        fillColor: Colors.amber,
+                        hintStyle: TextStyle(
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onPrimary
+                              .withOpacity(0.2),
+                        ),
+                        border: InputBorder.none,
+                      ),
                     ),
                   ),
                 ),

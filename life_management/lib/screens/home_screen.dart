@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:life_management/models/task.dart';
 import 'package:life_management/providers/task_provider.dart';
-import 'package:life_management/screens/all_tasks.dart';
-import 'package:life_management/screens/new_task.dart';
+import 'package:life_management/screens/all_tasks_screen.dart';
+import 'package:life_management/screens/new_task_screen.dart';
 import 'package:life_management/widgets/drawer_content.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -179,7 +179,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       children: [
                         if (allTasks.isEmpty)
                           Text(
-                            'You have no tasks\nTry adding new ones',
+                            '\t\tYou have no tasks\nStart adding new ones',
                             style: TextStyle(
                               color: Theme.of(context).colorScheme.primary,
                             ),
@@ -191,8 +191,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 height: 45,
                                 child: Card(
                                   color: task.completed
-                                      ? Theme.of(context).colorScheme.background
-                                      : Theme.of(context).colorScheme.tertiary,
+                                      ? Theme.of(context)
+                                          .colorScheme
+                                          .background
+                                      : Theme.of(context)
+                                          .colorScheme
+                                          .tertiary,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(20),
                                   ),
@@ -225,7 +229,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                         child: Flexible(
                                           child: Text(
                                             task.name,
-                                            maxLines: 2,
+                                            maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
                                             style: TextStyle(
                                               color: Theme.of(context)
@@ -308,13 +312,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           horizontal: 9,
                         ),
                       ),
-                      onPressed: () {
-                        Navigator.of(context).push(
+                      onPressed: () async {
+                        await Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (ctx) => const AllTasksScreen(),
                             maintainState: false,
                           ),
                         );
+                        setState(() {});
                       },
                       icon: const Icon(
                         Icons.arrow_downward_outlined,
