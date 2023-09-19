@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:life_management/models/task.dart';
 import 'package:life_management/providers/task_provider.dart';
 import 'package:life_management/screens/new_task_screen.dart';
 import 'package:life_management/screens/task_details_screen.dart';
+import 'package:life_management/widgets/task_card.dart';
 
 class AllTasksScreen extends ConsumerStatefulWidget {
   const AllTasksScreen({super.key});
@@ -18,15 +20,13 @@ class _AllTasksScreenState extends ConsumerState<AllTasksScreen> {
   @override
   Widget build(BuildContext context) {
     var allTasks = ref.watch(taskList);
-    if (_sortChoice == 'Oldest to Newest') {
-      allTasks.sort(
-        (a, b) => a.date.compareTo(b.date),
-      );
-    } else {
-      allTasks.sort(
-        (a, b) => b.date.compareTo(a.date),
-      );
-    }
+    _sortChoice == 'Oldest to Newest'
+        ? allTasks.sort(
+            (a, b) => a.date.compareTo(b.date),
+          )
+        : allTasks.sort(
+            (a, b) => b.date.compareTo(a.date),
+          );
     if (_filterChoice != 'All') {
       var newTask = allTasks.where((task) => task.tag == _filterChoice);
       allTasks = newTask.toList();
@@ -93,6 +93,7 @@ class _AllTasksScreenState extends ConsumerState<AllTasksScreen> {
                   children: [
                     if (allTasks.isEmpty && _filterChoice == 'All')
                       Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
                             'Start adding new Tasks!',
@@ -101,35 +102,20 @@ class _AllTasksScreenState extends ConsumerState<AllTasksScreen> {
                               fontSize: 20,
                             ),
                           ),
-                          const SizedBox(
-                            height: 30,
-                          ),
-                          ElevatedButton(
-                            onPressed: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (ctx) => const NewTaskScreen()));
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  Theme.of(context).colorScheme.secondary,
-                              foregroundColor:
-                                  Theme.of(context).colorScheme.onPrimary,
-                            ),
-                            child: const Text('Add Task'),
-                          )
                         ],
                       ),
                     if (allTasks.isNotEmpty || _filterChoice != 'All')
                       Padding(
                         padding: const EdgeInsets.all(20),
                         child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Text(
                               'Sort',
                               style: TextStyle(
-                                color: Theme.of(context).colorScheme.onPrimary,
-                                fontSize: 16,
-                              ),
+                                  color: Theme.of(context).colorScheme.primary,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold),
                             ),
                             const Spacer(),
                             DropdownButton(
@@ -149,10 +135,11 @@ class _AllTasksScreenState extends ConsumerState<AllTasksScreen> {
                                       child: Text(
                                         option,
                                         style: TextStyle(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .onPrimary,
-                                            fontSize: 14),
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onPrimary,
+                                          fontSize: 14,
+                                        ),
                                       ),
                                     ),
                                   )
@@ -167,9 +154,9 @@ class _AllTasksScreenState extends ConsumerState<AllTasksScreen> {
                             Text(
                               'Filter',
                               style: TextStyle(
-                                color: Theme.of(context).colorScheme.onPrimary,
-                                fontSize: 16,
-                              ),
+                                  color: Theme.of(context).colorScheme.primary,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold),
                             ),
                             const Spacer(),
                             DropdownButton(
@@ -199,6 +186,7 @@ class _AllTasksScreenState extends ConsumerState<AllTasksScreen> {
                                           color: Theme.of(context)
                                               .colorScheme
                                               .onPrimary,
+                                          fontSize: 14,
                                         ),
                                       ),
                                     ),
@@ -214,8 +202,12 @@ class _AllTasksScreenState extends ConsumerState<AllTasksScreen> {
                         ),
                       ),
                     if (allTasks.isEmpty && _filterChoice != 'All')
-                      const Center(
-                        child: Text('No Tasks for this tag available'),
+                      Text(
+                        'No Tasks for this tag available',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onPrimary,
+                          fontSize: 20,
+                        ),
                       ),
                     ...allTasks.map(
                       (task) {
@@ -227,96 +219,68 @@ class _AllTasksScreenState extends ConsumerState<AllTasksScreen> {
                               ),
                             );
                           },
-                          child: Card(
-                            color: task.completed
-                                ? Theme.of(context).colorScheme.background
-                                : Theme.of(context).colorScheme.tertiary,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20)),
-                            margin: const EdgeInsets.symmetric(
-                                horizontal: 30, vertical: 10),
-                            child: Padding(
-                              padding: const EdgeInsets.only(
-                                left: 10,
-                                right: 30,
-                                top: 5,
-                                bottom: 5,
+                          child: Dismissible(
+                            key: Key(task.date.toString()),
+                            onDismissed: (direction) {
+                              TaskModel currentTask = task;
+                              ref
+                                  .watch(taskList.notifier)
+                                  .deleteTask(task);
+                              ScaffoldMessenger.of(context).clearSnackBars();
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(SnackBar(
+                                content: Text('${task.name} is deleted'),
+                                action: SnackBarAction(
+                                  label: 'undo',
+                                  onPressed: () {
+                                    ref
+                                        .watch(taskList.notifier)
+                                        .addTask(currentTask);
+                                  },
+                                ),
+                              ));
+                            },
+                            background: Container(
+                              margin: const EdgeInsets.symmetric(
+                                      horizontal: 30,
+                                      vertical: 10,
+                                    ),
+                              decoration: const BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(30)),
+                                color: Colors.red,
                               ),
-                              child: Row(
-                                children: [
-                                  Checkbox(
-                                    side: BorderSide(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onPrimary,
-                                      width: 2,
-                                    ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    checkColor: Colors.white,
-                                    activeColor: Theme.of(context)
-                                        .colorScheme
-                                        .background,
-                                    value: task.completed,
-                                    onChanged: (bool? newValue) {
-                                      setState(() {
-                                        task.completed = newValue!;
-                                      });
-                                    },
-                                  ),
-                                  SizedBox(
-                                    width: 150,
-                                    child: Flexible(
-                                      child: Text(
-                                        task.name,
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .onPrimary,
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  const Spacer(),
-                                  task.tag != ''
-                                      ? Text(
-                                          '#${task.tag}',
-                                          style: TextStyle(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .primary,
-                                            fontSize: 16,
-                                          ),
-                                        )
-                                      : const Text(''),
-                                ],
-                              ),
+                            ),
+                            child: TaskCard(
+                              addMargin: true,
+                              addPadding: true,
+                              addTag: true,
+                              task: task,
                             ),
                           ),
                         );
                       },
                     ),
+                    // show add task in all cases
                     const SizedBox(
-                      height: 50,
+                      height: 30,
                     ),
-                    if (allTasks.isNotEmpty)
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (ctx) => const NewTaskScreen()));
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              Theme.of(context).colorScheme.secondary,
-                          foregroundColor:
-                              Theme.of(context).colorScheme.onPrimary,
-                        ),
-                        child: const Text('Add Task'),
-                      )
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (ctx) => const NewTaskScreen(),
+                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            Theme.of(context).colorScheme.secondary,
+                        foregroundColor:
+                            Theme.of(context).colorScheme.onPrimary,
+                      ),
+                      child: const Text('Add Task'),
+                    )
                   ],
                 ),
               ),

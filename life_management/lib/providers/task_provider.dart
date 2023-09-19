@@ -8,6 +8,10 @@ class TaskNotifier extends StateNotifier<List<TaskModel>>{
   void addTask(TaskModel task){
     state = [...state, task];
   }
+
+  void deleteTask(TaskModel task){
+    state = [...state.where((element) => element != task)];
+  }
 }
 
 
