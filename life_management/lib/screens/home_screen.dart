@@ -6,6 +6,7 @@ import 'package:life_management/models/task.dart';
 import 'package:life_management/providers/grocery_provider.dart';
 import 'package:life_management/providers/task_provider.dart';
 import 'package:life_management/screens/all_tasks_screen.dart';
+import 'package:life_management/screens/calender_screen.dart';
 import 'package:life_management/screens/new_task_screen.dart';
 import 'package:life_management/widgets/drawer_content.dart';
 import 'package:life_management/widgets/task_card.dart';
@@ -220,9 +221,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 .toString()
                                 .toUpperCase(),
                             style: TextStyle(
-                                color: Theme.of(context).colorScheme.onPrimary,
-                                fontSize: 17,
-                                letterSpacing: 1),
+                              color: Theme.of(context).colorScheme.onPrimary,
+                              fontSize: 17,
+                              letterSpacing: 1,
+                            ),
                           ),
                           Text(
                             DateFormat('d').format(DateTime.now()).toString(),
@@ -565,49 +567,58 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 ),
               ),
               const Spacer(),
-              Container(
-                padding: const EdgeInsets.only(
-                  left: 20,
-                  right: 20,
-                  top: 10,
-                  bottom: 5,
-                ),
-                margin: const EdgeInsets.only(
-                  right: 15,
-                  top: 15,
-                ),
-                height: 230,
-                width: 185,
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.all(Radius.circular(30)),
-                  color: Theme.of(context).colorScheme.shadow,
-                ),
-                child: Column(
-                  children: [
-                    Text(
-                      'Calender',
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onPrimary,
-                        fontSize: 23,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1,
+              InkWell(
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (ctx) => const CalenderScreen(),
+                    ),
+                  );
+                },
+                child: Container(
+                  padding: const EdgeInsets.only(
+                    left: 20,
+                    right: 20,
+                    top: 10,
+                    bottom: 5,
+                  ),
+                  margin: const EdgeInsets.only(
+                    right: 15,
+                    top: 15,
+                  ),
+                  height: 230,
+                  width: 185,
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.all(Radius.circular(30)),
+                    color: Theme.of(context).colorScheme.shadow,
+                  ),
+                  child: Column(
+                    children: [
+                      Text(
+                        'Calender',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onPrimary,
+                          fontSize: 23,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1,
+                        ),
                       ),
-                    ),
-                    Text(
-                      'X events today',
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onPrimary,
-                        fontSize: 10,
-                        letterSpacing: 1,
+                      Text(
+                        'X events today',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onPrimary,
+                          fontSize: 10,
+                          letterSpacing: 1,
+                        ),
                       ),
-                    ),
-                    const SizedBox(
-                      height: 30,
-                    ),
-                    const Center(
-                      child: Text('List to be added'),
-                    ),
-                  ],
+                      const SizedBox(
+                        height: 30,
+                      ),
+                      const Center(
+                        child: Text('List to be added'),
+                      ),
+                    ],
+                  ),
                 ),
               )
             ],
