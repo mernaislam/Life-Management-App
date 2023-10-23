@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:life_management/models/event.dart';
 import 'package:life_management/models/task.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:life_management/providers/event_provider.dart';
 import 'package:life_management/providers/task_provider.dart';
 import 'package:life_management/widgets/tags_drop_down_menu.dart';
 
 class NewTaskScreen extends ConsumerStatefulWidget {
-  const NewTaskScreen({super.key});
+  const NewTaskScreen({super.key, required this.choice});
+  final String choice;
 
   @override
   ConsumerState<NewTaskScreen> createState() => _NewTaskScreenState();
@@ -26,6 +29,23 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
     _dropDownValue == 'Tags' ? _dropDownValue = '' : null;
     ref.read(taskList.notifier).addTask(
           TaskModel(
+            name: _enteredName.text,
+            date: _currentDate,
+            time: _timeOfDay,
+            tag: _dropDownValue,
+            notes: _enteredNotes.text,
+          ),
+        );
+    Navigator.of(context).pop();
+  }
+
+  void _saveEvent() {
+    bool valid = formKey.currentState!.validate();
+    if (!valid) return;
+    formKey.currentState!.save();
+    _dropDownValue == 'Tags' ? _dropDownValue = '' : null;
+    ref.read(eventList.notifier).addEvent(
+          EventModel(
             name: _enteredName.text,
             date: _currentDate,
             time: _timeOfDay,
@@ -104,6 +124,8 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var choice = '';
+    widget.choice == 'task' ? choice = 'Task' : choice = 'Event';
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 30,
@@ -131,7 +153,7 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Create a new task',
+                  'Create a new ${choice.toLowerCase()}',
                   style: TextStyle(
                       color: Theme.of(context).colorScheme.primary,
                       fontSize: 32,
@@ -215,7 +237,7 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
                   height: 20,
                 ),
                 Text(
-                  '\tTask Name',
+                  '\t$choice Name',
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.onPrimary,
                     fontSize: 27,
@@ -237,7 +259,7 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
                           color: Theme.of(context).colorScheme.onPrimary),
                       autocorrect: false,
                       decoration: InputDecoration(
-                        hintText: 'Task Name',
+                        hintText: '$choice Name',
                         hintStyle: TextStyle(
                           color: Theme.of(context)
                               .colorScheme
@@ -249,7 +271,7 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
                       controller: _enteredName,
                       validator: (String? value) {
                         return (value == null || value.trim().isEmpty)
-                            ? 'You must provide a task name'
+                            ? 'You must provide a $choice name'
                             : null;
                       },
                     ),
@@ -283,7 +305,7 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.onPrimary),
                       decoration: InputDecoration(
-                        hintText: 'Write task notes here',
+                        hintText: 'Write $choice notes here',
                         fillColor: Colors.amber,
                         hintStyle: TextStyle(
                           color: Theme.of(context)
@@ -343,7 +365,7 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
                 ),
                 Center(
                   child: ElevatedButton(
-                    onPressed: _saveTask,
+                    onPressed: choice == 'Task' ? _saveTask : _saveEvent,
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Theme.of(context).colorScheme.onPrimary,
                       backgroundColor: Theme.of(context).colorScheme.secondary,

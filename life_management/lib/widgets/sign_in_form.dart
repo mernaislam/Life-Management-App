@@ -76,6 +76,9 @@ class _SignInFormState extends State<SignInForm> {
               ),
             ),
             TextFormField(
+              obscureText: true,
+              style: TextStyle(
+                  color: Theme.of(context).colorScheme.onPrimary, fontSize: 20),
               focusNode: myPasswordFocusNode,
               decoration: InputDecoration(
                 labelText: 'password:',

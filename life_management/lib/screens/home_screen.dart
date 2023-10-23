@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:life_management/models/event.dart';
 import 'package:life_management/models/grocery.dart';
 import 'package:life_management/models/task.dart';
+import 'package:life_management/providers/event_provider.dart';
 import 'package:life_management/providers/grocery_provider.dart';
 import 'package:life_management/providers/task_provider.dart';
 import 'package:life_management/screens/all_tasks_screen.dart';
@@ -90,6 +92,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget build(BuildContext context) {
     final allTasks = ref.watch(taskList);
     final allGroceries = ref.watch(groceryList);
+    var list = ref.watch(eventList);
+    final todayEvents = list.where(
+      (event) => event.date.day == DateTime.now().day,
+    );
     List<TaskModel> renderedTasks = allTasks;
     if (allTasks.length > 4) {
       renderedTasks = allTasks.sublist(0, 4);
@@ -312,7 +318,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       onPressed: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (ctx) => const NewTaskScreen(),
+                            builder: (ctx) => const NewTaskScreen(
+                              choice: 'task',
+                            ),
                             maintainState: false,
                           ),
                         );
@@ -575,49 +583,82 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     ),
                   );
                 },
-                child: Container(
-                  padding: const EdgeInsets.only(
-                    left: 20,
-                    right: 20,
-                    top: 10,
-                    bottom: 5,
-                  ),
-                  margin: const EdgeInsets.only(
-                    right: 15,
-                    top: 15,
-                  ),
-                  height: 230,
-                  width: 185,
-                  decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.all(Radius.circular(30)),
-                    color: Theme.of(context).colorScheme.shadow,
-                  ),
-                  child: Column(
-                    children: [
-                      Text(
-                        'Calender',
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.onPrimary,
-                          fontSize: 23,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 1,
+                child: SingleChildScrollView(
+                  child: Container(
+                    padding: const EdgeInsets.only(
+                      left: 10,
+                      right: 10,
+                      top: 10,
+                      bottom: 5,
+                    ),
+                    margin: const EdgeInsets.only(
+                      right: 15,
+                      top: 15,
+                    ),
+                    height: 230,
+                    width: 185,
+                    decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.all(Radius.circular(30)),
+                      color: Theme.of(context).colorScheme.shadow,
+                    ),
+                    child: Column(
+                      children: [
+                        Text(
+                          'Calender',
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onPrimary,
+                            fontSize: 23,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1,
+                          ),
                         ),
-                      ),
-                      Text(
-                        'X events today',
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.onPrimary,
-                          fontSize: 10,
-                          letterSpacing: 1,
+                        Text(
+                          '${todayEvents.length} events today',
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onPrimary,
+                            fontSize: 10,
+                            letterSpacing: 1,
+                          ),
                         ),
-                      ),
-                      const SizedBox(
-                        height: 30,
-                      ),
-                      const Center(
-                        child: Text('List to be added'),
-                      ),
-                    ],
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Column(children: [
+                          for (EventModel event in todayEvents)
+                            Card(
+                              color: Theme.of(context).colorScheme.background,
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 10,
+                                  right: 20,
+                                  top: 5,
+                                  bottom: 5,
+                                ),
+                                child: Row(
+                                  children: [
+                                    SizedBox(
+                                      width: 110,
+                                      child: Flexible(
+                                        child: Text(
+                                          event.name,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onPrimary,
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            )
+                        ])
+                      ],
+                    ),
                   ),
                 ),
               )

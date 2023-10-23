@@ -56,6 +56,8 @@ class _SignUpFormState extends State<SignUpForm> {
               height: 30,
             ),
             TextFormField(
+              style: TextStyle(
+                  color: Theme.of(context).colorScheme.onPrimary, fontSize: 20),
               focusNode: myNameFocusNode,
               decoration: InputDecoration(
                 labelText: 'name:',
@@ -91,6 +93,9 @@ class _SignUpFormState extends State<SignUpForm> {
               ),
             ),
             TextFormField(
+              obscureText: true,
+              style: TextStyle(
+                  color: Theme.of(context).colorScheme.onPrimary, fontSize: 20),
               focusNode: myPasswordFocusNode,
               decoration: InputDecoration(
                 labelText: 'password:',

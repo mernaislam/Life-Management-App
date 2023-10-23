@@ -1,22 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:life_management/models/event.dart';
+import 'package:life_management/providers/event_provider.dart';
+import 'package:life_management/providers/task_provider.dart';
+import 'package:life_management/screens/new_task_screen.dart';
 import 'package:life_management/widgets/wave_clipper_second.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-class CalenderScreen extends StatefulWidget {
+class CalenderScreen extends ConsumerStatefulWidget {
   const CalenderScreen({super.key});
   @override
-  State<CalenderScreen> createState() => _CalenderScreenState();
+  ConsumerState<CalenderScreen> createState() => _CalenderScreenState();
 }
 
-class _CalenderScreenState extends State<CalenderScreen> {
-
+class _CalenderScreenState extends ConsumerState<CalenderScreen> {
   String formatDay(String pattern) {
     return DateFormat(pattern).format(DateTime.now()).toString();
   }
 
   @override
   Widget build(BuildContext context) {
+    var list = ref.watch(eventList);
+    var listTasks = ref.watch(taskList);
+    final todayTasksCnt = listTasks.where((task) => task.date.day == DateTime.now().day,).length;
+    final todayEvents = list.where((event) => event.date.day == DateTime.now().day,);
+    final eventCnt = todayEvents.length;
     return Scaffold(
       appBar: AppBar(
         bottom: const PreferredSize(
@@ -55,7 +64,7 @@ class _CalenderScreenState extends State<CalenderScreen> {
                 ),
               ),
               Text(
-                '\tToday you have x tasks',
+                '\tToday you have $todayTasksCnt task${todayTasksCnt == 1 ? '' : 's'}',
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.onPrimary,
                   fontSize: 19,
@@ -155,6 +164,77 @@ class _CalenderScreenState extends State<CalenderScreen> {
                   focusedDay: DateTime.now(),
                 ),
               ),
+              const SizedBox(
+                height: 20,
+              ),
+              Row(
+                children: [
+                  Text(
+                    '\tYou have $eventCnt event${eventCnt == 1 ? '' : 's'} today',
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onPrimary,
+                      fontSize: 23,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const Spacer(),
+                  IconButton(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (ctx) =>
+                              const NewTaskScreen(choice: "event"),
+                        ),
+                      );
+                    },
+                    icon: Icon(
+                      Icons.add_circle_outline,
+                      color: Theme.of(context).colorScheme.onPrimary,
+                    ),
+                  )
+                ],
+              ),
+              for (EventModel event in todayEvents)
+                Card(
+                  color: Theme.of(context).colorScheme.shadow,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                      left: 20,
+                      right: 30,
+                      top: 10,
+                      bottom: 10,
+                    ),
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: 150,
+                          child: Flexible(
+                            child: Text(
+                              event.name,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.onPrimary,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
+                        ),
+                        if(event.tag != '')
+                          Text(
+                            '\t. #${event.tag}',
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.primary,
+                              fontSize: 13,
+                            ),
+                          )
+                      ],
+                    ),
+                  ),
+                )
             ],
           ),
         ),

@@ -269,7 +269,7 @@ class _AllTasksScreenState extends ConsumerState<AllTasksScreen> {
                       onPressed: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (ctx) => const NewTaskScreen(),
+                            builder: (ctx) => const NewTaskScreen(choice: "task",),
                           ),
                         );
                       },
